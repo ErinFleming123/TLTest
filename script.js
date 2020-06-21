@@ -1,11 +1,19 @@
 const listsContainer = document.querySelector('[data-lists]')
 const newListForm = document.querySelector('[data-new-list-form]')
 const newListInput = document.querySelector('[data-new-list-input]')
+const deleteListButton = document.querySelector('[data-delete-list-button]')
 
 const LOCAL_STORAGE_LIST_KEY = 'task.lists'
 const LOCAL_STORAGE_SELECTED_LIST_ID_KEY = 'task.selectedlListId'
 let lists = JSON.parse(localStorage.getItem(LOCAL_STORAGE_LIST_KEY)) || []
 let selectedListId = localStorage.getItem(LOCAL_STORAGE_SELECTED_LIST_ID_KEY)
+
+listsContainer.addEventListener( 'click', e => {
+  if (e.target.tagName.toLowerCase() === 'li') {
+    selectedListId = e.target.dataset.listId
+    saveAndRender()
+  }
+})
 
 
 newListForm.addEventListener('submit', e => {
@@ -29,6 +37,7 @@ function saveAndRender() {
 
 function save() {
   localStorage.setItem(LOCAL_STORAGE_LIST_KEY, JSON.stringify(lists))
+  localStorage.setItem(LOCAL_STORAGE_SELECTED_LIST_ID_KEY, selectedListId)
 }
 
 function render() {
@@ -38,7 +47,9 @@ function render() {
     listElement.dataset.listId = list.id
     listElement.classList.add("list-name")
     listElement.innerText = list.name
-    if (list.id === selectedListId)
+    if (list.id === selectedListId) {
+      listElement.classList.add('active-list')
+    }
     listsContainer.appendChild(listElement)
   })
 }
